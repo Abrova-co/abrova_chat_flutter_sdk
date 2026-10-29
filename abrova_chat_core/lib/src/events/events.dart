@@ -1,0 +1,319 @@
+import '../models/enums.dart';
+import '../models/message.dart';
+
+/// Event emitted when a user reads messages in a room.
+class ReadReceipt {
+  final String userId;
+  final String roomId;
+  final DateTime readAt;
+
+  const ReadReceipt({
+    required this.userId,
+    required this.roomId,
+    required this.readAt,
+  });
+
+  factory ReadReceipt.fromJson(Map<String, dynamic> json) {
+    return ReadReceipt(
+      userId: json['userId'] as String,
+      roomId: json['roomId'] as String,
+      readAt: DateTime.parse(json['readAt'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'roomId': roomId,
+      'readAt': readAt.toIso8601String(),
+    };
+  }
+
+  ReadReceipt copyWith({
+    String? userId,
+    String? roomId,
+    DateTime? readAt,
+  }) {
+    return ReadReceipt(
+      userId: userId ?? this.userId,
+      roomId: roomId ?? this.roomId,
+      readAt: readAt ?? this.readAt,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ReadReceipt &&
+        other.userId == userId &&
+        other.roomId == roomId &&
+        other.readAt == readAt;
+  }
+
+  @override
+  int get hashCode => Object.hash(userId, roomId, readAt);
+
+  @override
+  String toString() {
+    return 'ReadReceipt(userId: $userId, roomId: $roomId, readAt: $readAt)';
+  }
+}
+
+/// Event emitted when a message is deleted.
+class MessageDeletion {
+  final String messageId;
+  final String roomId;
+  final String deletedBy;
+
+  const MessageDeletion({
+    required this.messageId,
+    required this.roomId,
+    required this.deletedBy,
+  });
+
+  factory MessageDeletion.fromJson(Map<String, dynamic> json) {
+    return MessageDeletion(
+      messageId: json['messageId'] as String,
+      roomId: json['roomId'] as String,
+      deletedBy: json['deletedBy'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'messageId': messageId,
+      'roomId': roomId,
+      'deletedBy': deletedBy,
+    };
+  }
+
+  MessageDeletion copyWith({
+    String? messageId,
+    String? roomId,
+    String? deletedBy,
+  }) {
+    return MessageDeletion(
+      messageId: messageId ?? this.messageId,
+      roomId: roomId ?? this.roomId,
+      deletedBy: deletedBy ?? this.deletedBy,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is MessageDeletion &&
+        other.messageId == messageId &&
+        other.roomId == roomId &&
+        other.deletedBy == deletedBy;
+  }
+
+  @override
+  int get hashCode => Object.hash(messageId, roomId, deletedBy);
+
+  @override
+  String toString() {
+    return 'MessageDeletion(messageId: $messageId, roomId: $roomId, deletedBy: $deletedBy)';
+  }
+}
+
+/// Event emitted when a user is typing.
+class TypingEvent {
+  final String roomId;
+  final String userId;
+  final bool isTyping;
+
+  const TypingEvent({
+    required this.roomId,
+    required this.userId,
+    this.isTyping = true,
+  });
+
+  factory TypingEvent.fromJson(Map<String, dynamic> json) => TypingEvent(
+        roomId: json['roomId'] as String,
+        userId: json['userId'] as String,
+        isTyping: json['isTyping'] as bool? ?? true,
+      );
+}
+
+/// Event emitted when a reaction is added or removed.
+class ReactionEvent {
+  final String messageId;
+  final String roomId;
+  final String userId;
+  final String emoji;
+  final bool added;
+  final String? reactionId;
+
+  const ReactionEvent({
+    required this.messageId,
+    required this.roomId,
+    required this.userId,
+    required this.emoji,
+    required this.added,
+    this.reactionId,
+  });
+}
+
+/// Event emitted when a message is edited.
+class MessageEditEvent {
+  final String messageId;
+  final String roomId;
+  final String content;
+  final String editedBy;
+  final DateTime editedAt;
+
+  const MessageEditEvent({
+    required this.messageId,
+    required this.roomId,
+    required this.content,
+    required this.editedBy,
+    required this.editedAt,
+  });
+}
+
+/// Event emitted when a message is pinned or unpinned.
+class MessagePinEvent {
+  final String messageId;
+  final String roomId;
+  final String userId;
+  final bool pinned;
+
+  const MessagePinEvent({
+    required this.messageId,
+    required this.roomId,
+    required this.userId,
+    required this.pinned,
+  });
+}
+
+/// Event emitted when a connection error occurs.
+class ConnectionErrorEvent {
+  final Object error;
+
+  const ConnectionErrorEvent({required this.error});
+}
+
+/// Event emitted when subscription state changes.
+class SubscriptionStateEvent {
+  final String roomId;
+  final String channel;
+  final SubscriptionStatus status;
+  final int? code;
+  final String? reason;
+
+  const SubscriptionStateEvent({
+    required this.roomId,
+    required this.channel,
+    required this.status,
+    this.code,
+    this.reason,
+  });
+}
+
+/// Event emitted when user presence changes.
+class PresenceEvent {
+  final String roomId;
+  final String userId;
+  final bool isOnline;
+
+  const PresenceEvent({
+    required this.roomId,
+    required this.userId,
+    required this.isOnline,
+  });
+}
+
+/// Emitted when a realtime frame arrives but the SDK can't parse or
+/// dispatch it. Historically these were swallowed silently, which made
+/// intermittent "missing message" bugs impossible to diagnose. Wire this
+/// to your observability layer (AbrovaTrace, Sentry, etc.) so a bad
+/// wire payload surfaces instead of vanishing.
+///
+/// [channel] is the realtime channel the frame came in on (e.g.
+/// `chat:room_<uuid>`). [eventType] is the parsed `event`/`type` field
+/// from the payload — `null` when decode itself failed. [payload] is
+/// the raw decoded JSON when available. [error] and [stackTrace] are
+/// the caught exception details.
+class RealtimeParseError {
+  final String channel;
+  final String? roomId;
+  final String? eventType;
+  final Map<String, dynamic>? payload;
+  final Object error;
+  final StackTrace stackTrace;
+
+  const RealtimeParseError({
+    required this.channel,
+    this.roomId,
+    this.eventType,
+    this.payload,
+    required this.error,
+    required this.stackTrace,
+  });
+
+  @override
+  String toString() =>
+      'RealtimeParseError(channel=$channel, eventType=$eventType, '
+      'error=$error)';
+}
+
+/// The server refused the user's identity and a token refresh cannot fix it:
+/// the token was revoked or invalid, the project requires a token, or your
+/// [AbrovaChatConfig.tokenProvider] failed. Typically: send the user to login.
+///
+/// `code` is the server's reason (`token_revoked`, `token_invalid`,
+/// `token_required`, `token_expired` after a failed refresh) or
+/// `token_provider_failed`.
+class AuthErrorEvent {
+  final String code;
+  final String message;
+  final Object? error;
+
+  const AuthErrorEvent({required this.code, required this.message, this.error});
+
+  @override
+  String toString() => 'AuthErrorEvent($code: $message)';
+}
+
+/// A message queued while offline was stored by the server (only with
+/// `queueOfflineMessages`).
+///
+/// [localId] is the pending message's id (`local_<clientMessageId>`);
+/// [message] is the stored message. The live message event for it still
+/// arrives and carries the same [clientMessageId].
+class MessageSentEvent {
+  final String localId;
+  final String clientMessageId;
+  final Message message;
+
+  const MessageSentEvent({
+    required this.localId,
+    required this.clientMessageId,
+    required this.message,
+  });
+}
+
+/// A message queued while offline left the queue without being stored (only
+/// with `queueOfflineMessages`).
+///
+/// [reason] is [reasonExpired] (it waited more than 24 hours) or
+/// [reasonRejected] (the server refused it, e.g. not a member any more).
+class MessageFailedEvent {
+  static const reasonExpired = 'expired';
+  static const reasonRejected = 'rejected';
+
+  final String localId;
+  final String clientMessageId;
+  final String roomId;
+  final String error;
+  final String reason;
+
+  const MessageFailedEvent({
+    required this.localId,
+    required this.clientMessageId,
+    required this.roomId,
+    required this.error,
+    required this.reason,
+  });
+}

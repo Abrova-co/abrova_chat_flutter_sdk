@@ -1,0 +1,26 @@
+name: abrova_chat_ui
+description: Pre-built UI widgets for AbrovaChat SDK. Ready-to-use chat screens, message bubbles, and more.
+version: 0.2.0
+homepage: https://abrova.ir/cloud/abrova-chat
+repository: https://github.com/Abrova-co/abrova_chat_flutter_sdk
+
+environment:
+  sdk: ^3.8.1
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  abrova_chat:
+    hosted: https://center.abrova.ir/api/packages/abrova/pub
+    version: ^0.2.0
+  cached_network_image: ^3.4.1
+  url_launcher: ^6.2.5
+  image_picker: ^1.0.7
+  file_picker: ^8.0.0
+  emoji_picker_flutter: ^4.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
