@@ -18,7 +18,7 @@ dependencies:
     path: ../abrova_chat_ui
   abrova_push:
     hosted: https://center.abrova.ir/api/packages/abrova/pub
-    version: ^0.1.13
+    version: ^0.1.26
 
   # UI dependencies
   cached_network_image: ^3.4.1

@@ -30,10 +30,6 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
 
-  # The native Abrova Push SDK (used by the abrova_push plugin) is published on Abrova Center.
-  pod 'PNProtocol', :git => 'https://center.abrova.ir/abrova/pn-protocol-ios.git', :tag => '0.2.2'
-  pod 'AbrovaPushSDK', :git => 'https://center.abrova.ir/abrova/abrova-push-ios-sdk.git', :tag => '0.1.19'
-
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
